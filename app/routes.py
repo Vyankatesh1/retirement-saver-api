@@ -1,16 +1,26 @@
 from fastapi import APIRouter
-from app.logic import parse_txns, apply_rules, calc_returns
-
 router = APIRouter()
-
 @router.post("/api/v1/transactions/parse")
-def parse_transactions(data: list):
-    return parse_txns(data)
+def parse_transactions(payload: dict):
+    raw_text = payload.get("raw_text", "")
 
-@router.post("/api/v1/transactions/filter")
-def filter_transactions(body: dict):
-    return apply_rules(body)
+    if not raw_text:
+        return {"error": "raw_text is required"}
 
-@router.post("/api/v1/returns/index")
-def index_returns(body: dict):
-    return calc_returns(body)
+    words = raw_text.split()
+
+    merchant = words[0] if len(words) > 0 else ""
+    amount = 0
+    date = ""
+
+    for w in words:
+        if w.isdigit():
+            amount = int(w)
+        if "-" in w and len(w) == 10:
+            date = w
+
+    return {
+        "merchant": merchant,
+        "amount": amount,
+        "date": date
+    }

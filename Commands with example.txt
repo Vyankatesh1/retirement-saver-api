@@ -1,0 +1,12 @@
+##run server
+python -m uvicorn app.main:app --port 5477 --reload
+
+
+
+## to check api call on swagger
+
+curl -X POST http://127.0.0.1:5477/api/v1/transactions/parse ^
+-H "Content-Type: application/json" ^
+-d "{\"raw_text\":\"Swiggy purchase 1500 on 2026-01-01\"}"
+
+
